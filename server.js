@@ -4,7 +4,8 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(function(req, res, next) {
-  var ip = req.ip || req.connection.remoteAddress;
+  var forwarded = req.headers['x-forwarded-for'];
+  var ip = forwarded ? forwarded.split(',')[0].trim() : (req.ip || req.connection.remoteAddress);
   var timestamp = new Date().toLocaleString();
   var log = 'IP: ' + ip + ', Timestamp: ' + timestamp + ', URL: ' + req.url + '\n';
   fs.appendFile('access.log', log, function(err) {
